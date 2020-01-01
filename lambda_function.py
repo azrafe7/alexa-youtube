@@ -748,7 +748,10 @@ def get_url_and_title_youtube_dl(id, retry=True):
             with youtube_dl.YoutubeDL(youtube_dl_properties) as ydl:
                 yt_url = 'http://www.youtube.com/watch?v='+id
                 info = ydl.extract_info(yt_url, download=False)
-        except:
+        except Exception as e:
+            if 'unavailable' in e.__str__() or 'not available' in e.__str__():
+                logger.info(id+' is unavailable')
+                return None, None
             logger.info('youtube_dl error')
             if 'youtube_dl_error_mirror' in environ and 'http' in environ['youtube_dl_error_mirror']:
                 logger.info('Trying mirror: '+environ['youtube_dl_error_mirror'])
@@ -776,7 +779,7 @@ def get_url_and_title_pytube(id, retry=True):
     if 'pytube' in environ and 'http' in environ['pytube']:
         return get_url_and_title_pytube_server(id)
     from pytube import YouTube
-    from pytube.exceptions import LiveStreamError
+    from pytube.exceptions import LiveStreamError, VideoUnavailable
     proxy_list = {}
     if 'proxy_enabled' in environ and 'proxy' in environ and environ['proxy_enabled'] == 'true':
         proxy_list = {'https': environ['proxy']}
@@ -786,6 +789,9 @@ def get_url_and_title_pytube(id, retry=True):
     except LiveStreamError:
         logger.info(id+' is a live video')
         return get_live_video_url_and_title(id)
+    except VideoUnavailable:
+        logger.info(id+' is unavailable')
+        return None, None
     except HTTPError as e:
         logger.info('HTTPError code '+str(e.code))
         if retry:
@@ -1104,6 +1110,9 @@ def resume(event, offsetInMilliseconds=None):
 
 
 def change_mode(event, mode, value):
+    if 'token' not in event['context']['AudioPlayer']:
+        speech_output = strings['nothingplaying']
+        return build_response(build_short_speechlet_response(speech_output, True))
     current_token = event['context']['AudioPlayer']['token']
     should_end_session = True
     playlist = convert_token_to_dict(current_token)
