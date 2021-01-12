@@ -1298,3 +1298,17 @@ def skill_expired():
     speech_output += 'If you would like to continue using this skill, please go to patreon.com/alexayoutube to renew your subscription. '
     speech_output += '</prosody></voice></speak> '
     return build_response(build_cardless_speechlet_response(speech_output, '', True, 'SSML'))
+
+
+if __name__ == '__main__':
+    # set youtube_dl env var to true, then...
+    print("youtube_dl")
+    import youtube_dl
+    youtube_dl_properties = {}
+    id = 'R52pMSlNVfw'
+    video_or_audio = [False, 'audio']
+    with youtube_dl.YoutubeDL(youtube_dl_properties) as ydl:
+        yt_url = 'http://www.youtube.com/watch?v='+id
+        #info = ydl.extract_info(yt_url, download=False)
+        print(get_url_and_title(id))
+        

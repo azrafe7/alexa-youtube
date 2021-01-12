@@ -1,4 +1,12 @@
 # alexa-youtube
+Remember to set a valid/working YouTube API key.
+And maybe use youtube_dl instead of pytube.
+See https://github.com/ndg63276/alexa-youtube/issues  #110
+
+
+Original README follows..
+
+# alexa-youtube
 ## Unofficial YouTube skill for Alexa
 __Last update: 27 Dec 2019__
 
