@@ -900,6 +900,7 @@ def search(event):
     playlist['l'] = '0'
     videos, playlist_channel_video, playlist_title = check_favorite_videos(event, query, playlist['s'])
     if videos == []:
+        logger.info('videos == [], intent_name: ' + intent_name)
         if intent_name == "PlaylistIntent" or intent_name == "ShufflePlaylistIntent" or intent_name == "NextPlaylistIntent":
             videos, playlist_title, playlist['sr'], errorMessage = playlist_search(query, sr, playlist['s'])
             playlist_channel_video = strings['playlist']
